@@ -21,12 +21,12 @@ ENV NEXT_PUBLIC_WEBAPP_URL=http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE} \
     BUILD_STANDALONE=true
 
-COPY calcom/package.json calcom/yarn.lock calcom/.yarnrc.yml calcom/playwright.config.ts calcom/turbo.json calcom/git-init.sh calcom/git-setup.sh calcom/i18n.json ./
-COPY calcom/.yarn ./.yarn
-COPY calcom/apps/web ./apps/web
-COPY calcom/apps/api/v2 ./apps/api/v2
-COPY calcom/packages ./packages
-COPY calcom/tests ./tests
+COPY package.json yarn.lock .yarnrc.yml playwright.config.ts turbo.json git-init.sh git-setup.sh i18n.json ./
+COPY .yarn ./.yarn
+COPY apps/web ./apps/web
+COPY apps/api/v2 ./apps/api/v2
+COPY packages ./packages
+COPY tests ./tests
 
 RUN yarn config set httpTimeout 1200000
 RUN npx turbo prune --scope=@calcom/web --docker
@@ -45,8 +45,8 @@ ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
 
 ENV NODE_ENV production
 
-COPY calcom/package.json calcom/.yarnrc.yml calcom/turbo.json calcom/i18n.json ./
-COPY calcom/.yarn ./.yarn
+COPY package.json .yarnrc.yml turbo.json i18n.json ./
+COPY .yarn ./.yarn
 COPY --from=builder /yarn.lock ./yarn.lock
 COPY --from=builder /node_modules ./node_modules
 COPY --from=builder /packages ./packages
