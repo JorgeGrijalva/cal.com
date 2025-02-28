@@ -1,6 +1,6 @@
 FROM node:18 as builder
 
-WORKDIR /
+WORKDIR /app
 
 ARG NEXT_PUBLIC_LICENSE_CONSENT
 ARG CALCOM_TELEMETRY_DISABLED
@@ -23,8 +23,7 @@ ENV NEXT_PUBLIC_WEBAPP_URL=http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER \
 
 COPY package.json yarn.lock .yarnrc.yml playwright.config.ts turbo.json git-init.sh git-setup.sh i18n.json ./
 COPY .yarn ./.yarn
-COPY apps/web ./apps/web
-COPY apps/api/v2 ./apps/api/v2
+COPY apps ./apps
 COPY packages ./packages
 COPY tests ./tests
 
@@ -40,18 +39,18 @@ RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
 FROM node:18 as builder-two
 
-WORKDIR /
+WORKDIR /app
 ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 COPY package.json .yarnrc.yml turbo.json i18n.json ./
 COPY .yarn ./.yarn
-COPY --from=builder /yarn.lock ./yarn.lock
-COPY --from=builder /node_modules ./node_modules
-COPY --from=builder /packages ./packages
-COPY --from=builder /apps/web ./apps/web
-COPY --from=builder /packages/prisma/schema.prisma ./prisma/schema.prisma
+COPY --from=builder /app/yarn.lock ./yarn.lock
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps ./apps
+COPY --from=builder /app/packages/prisma/schema.prisma ./prisma/schema.prisma
 COPY scripts scripts
 
 ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
@@ -61,16 +60,16 @@ RUN scripts/replace-placeholder.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${N
 
 FROM node:18 as runner
 
-WORKDIR /
-COPY --from=builder-two / ./
+WORKDIR /app
+COPY --from=builder-two /app ./
 ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
 ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
     BUILT_NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=30s --retries=5 \
     CMD wget --spider http://localhost:3000 || exit 1
 
-CMD ["/scripts/start.sh"]
+CMD ["/app/scripts/start.sh"]
