@@ -26,6 +26,7 @@ COPY .yarn ./.yarn
 COPY apps ./apps
 COPY packages ./packages
 COPY tests ./tests
+COPY scripts ./scripts
 
 RUN yarn config set httpTimeout 1200000
 RUN npx turbo prune --scope=@calcom/web --docker
@@ -51,9 +52,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps ./apps
 COPY --from=builder /app/packages/prisma/schema.prisma ./prisma/schema.prisma
-
-
-COPY scripts scripts
+COPY --from=builder /app/scripts ./scripts
 
 #ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
 #    BUILT_NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL
