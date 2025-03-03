@@ -53,7 +53,7 @@ COPY --from=builder /app/apps ./apps
 COPY --from=builder /app/packages/prisma/schema.prisma ./prisma/schema.prisma
 
 
-#COPY scripts scripts
+COPY scripts scripts
 
 #ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
 #    BUILT_NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL
