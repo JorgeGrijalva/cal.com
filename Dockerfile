@@ -38,6 +38,8 @@ RUN yarn --cwd apps/web workspace @calcom/web run build
 
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
 
+RUN chmod +x /app/scripts/*.sh
+
 FROM node:18 as builder-two
 
 WORKDIR /app
