@@ -59,6 +59,7 @@ COPY --from=builder /app/scripts ./scripts
 
 #RUN scripts/replace-placeholder.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_WEBAPP_URL}
 
+
 FROM node:18 as runner
 
 WORKDIR /app
