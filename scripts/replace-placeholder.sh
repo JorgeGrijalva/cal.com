@@ -10,7 +10,7 @@ fi
 # Only peform action if $FROM and $TO are different.
 echo "Replacing all statically built instances of $FROM with $TO."
 
-find /app/apps/web/.next/ /app/apps/web/public -type f |
+find apps/web/.next/ apps/web/public -type f |
 while read file; do
     sed -i "s|$FROM|$TO|g" "$file"
 done
