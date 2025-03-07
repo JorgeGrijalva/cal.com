@@ -1,4 +1,4 @@
-name: Docker Custom Image CI GHCR
+name: Docker Custom API Image CI GHCR
 run-name: Build ${{ inputs.branch }} - ${{ inputs.user }}
 
 on:
@@ -49,7 +49,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
         with:
           context: .
-          file: ./Dockerfile  
+          file: ./apps/api/v2/Dockerfile 
           platforms: linux/amd64
           provenance: false
           push: true
