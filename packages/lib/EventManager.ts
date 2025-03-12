@@ -180,6 +180,7 @@ export default class EventManager {
    */
   public async create(event: CalendarEvent): Promise<CreateUpdateResult> {
     const evt = processLocation(event);
+    log.warn("event", evt);
 
     // Fallback to cal video if no location is set
     if (!evt.location) {
@@ -812,7 +813,9 @@ export default class EventManager {
     /** @fixme potential bug since Google Meet are saved as `integrations:google:meet` and there are no `google:meet` type in our DB */
     const integrationName = event.location.replace("integrations:", "");
     let videoCredential;
+    log.warn("🚀 ~ EventManager ~ getVideoCredential ~ conferenceCredentialId:", event.conferenceCredentialId)
     if (event.conferenceCredentialId) {
+      
       videoCredential = this.videoCredentials.find(
         (credential) => credential.id === event.conferenceCredentialId
       );
@@ -824,6 +827,7 @@ export default class EventManager {
         `Could not find conferenceCredentialId for event with location: ${event.location}, trying to use last added video credential`
       );
     }
+    log.warn("🚀 ~ EventManager ~ getVideoCredential ~ videoCredential:", videoCredential)
 
     /**
      * This might happen if someone tries to use a location with a missing credential, so we fallback to Cal Video.
