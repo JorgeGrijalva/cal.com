@@ -49,7 +49,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
         with:
           context: .
-          file: .Dockerfile 
+          file: Dockerfile 
           platforms: linux/amd64
           provenance: false
           push: true
