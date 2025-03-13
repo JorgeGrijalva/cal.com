@@ -31,9 +31,9 @@ COPY scripts ./scripts
 RUN yarn config set httpTimeout 1200000
 RUN npx turbo prune --scope=@calcom/web --docker
 RUN yarn install
-#RUN yarn db-deploy
-#RUN yarn --cwd packages/prisma seed-app-store
-#RUN yarn --cwd packages/embeds/embed-core workspace @calcom/embed-core run build
+RUN yarn db-deploy
+RUN yarn --cwd packages/prisma seed-app-store
+RUN yarn --cwd packages/embeds/embed-core workspace @calcom/embed-core run build
 RUN yarn --cwd apps/web workspace @calcom/web run build
 
 RUN rm -rf node_modules/.cache .yarn/cache apps/web/.next/cache
@@ -57,10 +57,10 @@ COPY --from=builder /app/packages/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=builder /app/scripts ./scripts
 
 
-#ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
-#   BUILT_NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL
+ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
+   BUILT_NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL
 
-#RUN scripts/replace-placeholder.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_WEBAPP_URL}
+RUN scripts/replace-placeholder.sh http://NEXT_PUBLIC_WEBAPP_URL_PLACEHOLDER ${NEXT_PUBLIC_WEBAPP_URL}
 
 
 FROM node:18 as runner
@@ -77,4 +77,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=30s --retries=5 \
     CMD wget --spider http://localhost:3000 || exit 1
 
-CMD ["sh", "/app/docker/start.sh"]
+CMD ["sh", "/app/scripts/start.sh"]
